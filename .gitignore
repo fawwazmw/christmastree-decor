@@ -1,0 +1,58 @@
+# Node.js dependencies (npm packages)
+node_modules/
+
+# Build output directories
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# SASS/SCSS cache files
+.sass-cache/
+
+# Cache and miscellaneous
+.cache/
+*.cache
+
+# Generated files
+*.min.js
+*.min.css
+*.map
+
+# Environment and configuration
+.env
+.env.local
+.env.*.local
+
+# Debug files
+*.log
+
+# Others
+*.bak
+*.orig
+*.rej
+
+# Ignore images for testing (if any)
+assets/images/test/
+
+# Ignore HTML/CSS/JS backup files
+*.bak
+*.old
+*.backup
