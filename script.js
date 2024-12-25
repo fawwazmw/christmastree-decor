@@ -58,11 +58,11 @@ function createSnow() {
     // Pilih SVG secara random
     const randomSvg = svgFiles[Math.floor(Math.random() * svgFiles.length)];
 
-    // Random position
-    snowflake.style.left = Math.random() * 100 + 'vw';
-
-    // Random size (antara 10px sampai 25px)
-    const size = Math.random() * 15 + 10;
+    // Random horizontal position (0 hingga viewport width - snowflake width)
+    const maxWidth = window.innerWidth; // Lebar viewport
+    const maxHeight = window.innerHeight; // Tinggi viewport
+    const size = Math.random() * 20 + 10; // Ukuran salju antara 10px dan 30px
+    snowflake.style.left = Math.random() * (maxWidth - size) + 'px'; // Pastikan tidak keluar
     snowflake.style.width = size + 'px';
     snowflake.style.height = size + 'px';
 

@@ -64,22 +64,26 @@ body {
   /* 2 */
 }
 
+/* Salju */
 .snow {
   position: absolute;
-  width: 20px;
-  height: 20px;
+  top: -10%; /* Mulai di atas viewport */
   animation: fall linear infinite;
+  z-index: 1000; /* Agar di atas elemen lain */
 }
+
 .snow img {
   width: 100%;
   height: 100%;
 }
+
+/* Keyframes untuk salju */
 @keyframes fall {
   from {
-    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    transform: translateY(-10vh) rotate(0deg); /* Mulai sedikit di atas layar */
   }
   to {
-    transform: translateY(100vh) translateX(100px) rotate(360deg);
+    transform: translateY(100vh) rotate(360deg); /* Jatuh hingga di luar layar */
   }
 }
 
