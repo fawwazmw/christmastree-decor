@@ -257,8 +257,6 @@ window.onload = function () {
     document.getElementById('baseSelector').style.top = document.getElementById('decorDock').offsetHeight + 'px';
     document.getElementById('baseSelector').style.paddingBottom = document.getElementById('decorDock').offsetHeight + 'px';
 
-    document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
-    document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
 
     setTimeout(() => {
         document.getElementById('welcomeModal').classList.add('flex');
@@ -328,8 +326,6 @@ function switchO() {
     document.getElementById('random').classList.add('border-gray-400/90');
     dImg = 'random.png';
 
-    document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
-    document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
 
     if (window.innerWidth < 905 || window.innerHeight < 850) closeBaseSelector();
 }
@@ -366,8 +362,6 @@ function switchC() {
     document.getElementById('random').classList.add('border-gray-400/90');
     dImg = 'random.png';
 
-    document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
-    document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
 
     if (window.innerWidth < 905 || window.innerHeight < 850) closeBaseSelector();
 }
@@ -404,8 +398,6 @@ function switchF() {
     document.getElementById('random').classList.add('border-gray-400/90');
     dImg = 'random.png';
 
-    document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
-    document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
 
     if (window.innerWidth < 905 || window.innerHeight < 850) closeBaseSelector();
 }
@@ -442,8 +434,6 @@ function switchL() {
     document.getElementById('random').classList.add('border-gray-400/90');
     dImg = 'random.png';
 
-    document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
-    document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
 
     if (window.innerWidth < 905 || window.innerHeight < 850) closeBaseSelector();
 }
@@ -480,8 +470,6 @@ function switchT() {
     document.getElementById('random').classList.add('border-gray-400/90');
     dImg = 'random.png';
 
-    document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
-    document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
 
     if (window.innerWidth < 905 || window.innerHeight < 850) closeBaseSelector();
 }
@@ -518,8 +506,6 @@ function switchP() {
     document.getElementById('random').classList.add('border-gray-400/90');
     dImg = 'random.png';
 
-    document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
-    document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
 
     if (window.innerWidth < 905 || window.innerHeight < 850) closeBaseSelector();
 }
@@ -543,42 +529,33 @@ function toggleB() {
 }
 
 function hideB() {
+    // Hide decoration selectors only, NOT decorDock (keep control buttons visible)
     document.getElementById('decorSelector').classList.remove('md:block');
     document.getElementById('decorSelector').classList.add('hidden');
     document.getElementById('baseSelector').classList.remove('md:block');
     document.getElementById('baseSelector').classList.add('hidden');
-    document.getElementById('decorDock').classList.remove('block');
-    document.getElementById('decorDock').classList.add('hidden');
     
-    // Reset position (works for both mobile and desktop)
-    document.getElementById('optionsDiv').style.top = '0px';
-    document.getElementById('optionsDiv').style.left = '0px';
-    document.getElementById('optionsDiv').classList.add('hover:opacity-100');
+    // Keep decorDock visible - it contains control buttons!
+    // Only hide on mobile when needed
     
+    // Change icon
     document.getElementById('hideI').classList.remove('fa-angle-up');
     document.getElementById('hideI').classList.add('fa-angle-down');
     ctx5.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function showB() {
+    // Show decoration selectors
     document.getElementById('decorSelector').classList.remove('hidden');
     document.getElementById('decorSelector').classList.add('md:block');
     document.getElementById('baseSelector').classList.remove('hidden');
     document.getElementById('baseSelector').classList.add('md:block');
+    
+    // Ensure decorDock is visible
     document.getElementById('decorDock').classList.remove('hidden');
     document.getElementById('decorDock').classList.add('block');
     
-    // Only adjust positioning on desktop (md and above)
-    if (window.innerWidth >= 768) {
-        document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
-        document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
-    } else {
-        // On mobile, reset to default position
-        document.getElementById('optionsDiv').style.top = '';
-        document.getElementById('optionsDiv').style.left = '';
-    }
-    
-    document.getElementById('optionsDiv').classList.remove('hover:opacity-100');
+    // Change icon
     document.getElementById('hideI').classList.remove('fa-angle-down');
     document.getElementById('hideI').classList.add('fa-angle-up');
 }
@@ -621,15 +598,12 @@ function changeSize() {
 // hide hide/show button after 5 seconds of inactivity when menu is also hidden
 let timeout = function () {
     if (!document.getElementById('decorSelector').classList.contains('md:block')) {
-        document.getElementById('optionsDiv').classList.add('opacity-50');
         timer2 = setTimeout(timeout2, 3000);
     }
 }
 
 let timeout2 = function () {
     if (!document.getElementById('decorSelector').classList.contains('md:block')) {
-        document.getElementById('optionsDiv').classList.remove('opacity-50');
-        document.getElementById('optionsDiv').classList.add('opacity-0');
     }
 }
 
@@ -647,31 +621,12 @@ function undoLast() {
 }
 
 // Toggle decoration tabs visibility
-function toggleDecorDock() {
-    const decorDock = document.getElementById('decorDock');
-    const hideTabsIcon = document.getElementById('hideTabsIcon');
-    
-    if (decorDock.classList.contains('hidden')) {
-        decorDock.classList.remove('hidden');
-        hideTabsIcon.classList.remove('fa-eye');
-        hideTabsIcon.classList.add('fa-eye-slash');
-    } else {
-        decorDock.classList.add('hidden');
-        hideTabsIcon.classList.remove('fa-eye-slash');
-        hideTabsIcon.classList.add('fa-eye');
-    }
-}
-
-let timer2;
-let timer;
 window.addEventListener('mousemove', function () {
     clearTimeout(timer);
     clearTimeout(timer2);
     timer = setTimeout(timeout, 2000);
 
     if (!document.getElementById('decorSelector').classList.contains('md:block')) {
-        document.getElementById('optionsDiv').classList.remove('opacity-50');
-        document.getElementById('optionsDiv').classList.remove('opacity-0');
     }
 }, false);
 
