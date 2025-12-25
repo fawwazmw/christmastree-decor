@@ -38,6 +38,8 @@ christmastree-decor/
 - ✨ **200+ Decorations**: Ornamen, lampu, permen tongkat, bunga, kado, dan lainnya
 - 📐 **Size Control**: Ubah ukuran dekorasi (Mini, Small, Normal, Large, Colossal)
 - 🎨 **Background Colors**: 16 pilihan warna background
+- ↩️ **Undo Feature**: Hapus dekorasi terakhir jika salah
+- 👁️ **Hide Tabs**: Sembunyikan decoration tabs untuk tampilan lebih luas (cocok untuk mobile)
 - 💾 **Save Feature**: Simpan hasil karya sebagai gambar PNG
 - 🌨️ **Snow Animation**: Animasi salju untuk suasana Natal
 - 🎁 **Personal Greeting**: Ucapan Merry Christmas yang personal
@@ -49,6 +51,8 @@ christmastree-decor/
 3. Pilih kategori dekorasi dari menu atas
 4. Klik pada pohon untuk menambahkan dekorasi
 5. Gunakan tombol kontrol untuk:
+   - **👁️ Hide Tabs** - Hide/show decoration tabs
+   - **↩️ Undo** - Remove last decoration
    - Hide/Show menu
    - Change decoration size
    - Toggle music

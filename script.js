@@ -25,6 +25,9 @@ let dResizeConstant = lgTreeWidth / smTreeWidth;
 
 let sizeFactor = 1;
 
+// Decoration history for undo feature
+let decorationHistory = [];
+
 let canvas = document.getElementById('canvas');
 let canvas2 = document.getElementById('canvas2');
 let canvas3 = document.getElementById('canvas3');
@@ -618,6 +621,35 @@ let timeout2 = function () {
     }
 }
 
+// Undo last decoration
+function undoLast() {
+    if (decorationHistory.length > 0) {
+        decorationHistory.pop(); // Remove last decoration from history
+        
+        // Redraw all decorations
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        decorationHistory.forEach(decor => {
+            ctx.drawImage(decor.image, decor.x, decor.y, decor.w, decor.h);
+        });
+    }
+}
+
+// Toggle decoration tabs visibility
+function toggleDecorDock() {
+    const decorDock = document.getElementById('decorDock');
+    const hideTabsIcon = document.getElementById('hideTabsIcon');
+    
+    if (decorDock.classList.contains('hidden')) {
+        decorDock.classList.remove('hidden');
+        hideTabsIcon.classList.remove('fa-eye');
+        hideTabsIcon.classList.add('fa-eye-slash');
+    } else {
+        decorDock.classList.add('hidden');
+        hideTabsIcon.classList.remove('fa-eye-slash');
+        hideTabsIcon.classList.add('fa-eye');
+    }
+}
+
 let timer2;
 let timer;
 window.addEventListener('mousemove', function () {
@@ -692,6 +724,14 @@ canvas5.addEventListener('mousemove', function (event) {
 }, false);
 
 canvas5.addEventListener('click', function () {
+    // Save decoration to history
+    decorationHistory.push({
+        image: d,
+        x: finalX,
+        y: finalY,
+        w: finalW,
+        h: finalH
+    });
     ctx.drawImage(d, finalX, finalY, finalW, finalH);
 }, false);
 
