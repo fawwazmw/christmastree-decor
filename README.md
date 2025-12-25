@@ -39,7 +39,6 @@ christmastree-decor/
 - 📐 **Size Control**: Ubah ukuran dekorasi (Mini, Small, Normal, Large, Colossal)
 - 🎨 **Background Colors**: 16 pilihan warna background
 - 💾 **Save Feature**: Simpan hasil karya sebagai gambar PNG
-- 📱 **Story Snapshot**: Export pohon ke format vertical story (1080x1920px) untuk Instagram/WhatsApp
 - 🌨️ **Snow Animation**: Animasi salju untuk suasana Natal
 - 🎁 **Personal Greeting**: Ucapan Merry Christmas yang personal
 
@@ -53,7 +52,6 @@ christmastree-decor/
    - Hide/Show menu
    - Change decoration size
    - Toggle music
-   - **📱 Story** - Create Instagram/WhatsApp story format (1080x1920)
    - Save your tree
 
 ## Technologies

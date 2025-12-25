@@ -169,9 +169,6 @@ window.onclick = function (event) {
     if (event.target == document.getElementById('welcomeModal')) {
         closeWelcomeModal();
     }
-    if (event.target == document.getElementById('storyPreviewModal')) {
-        closeStoryPreview();
-    }
 }
 
 function closeWelcomeModal() {
@@ -181,27 +178,6 @@ function closeWelcomeModal() {
     if (!musicPlaying) {
         bgMusic.play().catch(e => console.log('Audio autoplay prevented'));
         musicPlaying = true;
-    }
-}
-
-let currentStoryBlob = null;
-
-function closeStoryPreview() {
-    document.getElementById('storyPreviewModal').classList.add('hidden');
-    document.getElementById('storyPreviewModal').classList.remove('flex');
-    if (currentStoryBlob) {
-        URL.revokeObjectURL(document.getElementById('storyPreviewImage').src);
-        currentStoryBlob = null;
-    }
-}
-
-function downloadStoryImage() {
-    if (currentStoryBlob) {
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(currentStoryBlob);
-        link.download = 'christmas-tree-story.png';
-        link.click();
-        closeStoryPreview();
     }
 }
 
@@ -1083,129 +1059,6 @@ function openSecret() {
     dImg = 'random.png';
 }
 
-function takeStorySnapshot() {
-    // Instagram/WhatsApp story size: 1080x1920 (9:16 ratio)
-    const STORY_WIDTH = 1080;
-    const STORY_HEIGHT = 1920;
-    
-    // Create temporary canvas for story
-    const storyCanvas = document.createElement('canvas');
-    storyCanvas.width = STORY_WIDTH;
-    storyCanvas.height = STORY_HEIGHT;
-    const storyCtx = storyCanvas.getContext('2d');
-    
-    // Fill with gradient background
-    const gradient = storyCtx.createLinearGradient(0, 0, 0, STORY_HEIGHT);
-    const bgColor = window.getComputedStyle(document.body).backgroundColor;
-    
-    // Create beautiful gradient based on current background
-    if (bgColor.includes('255, 255, 255')) { // white
-        gradient.addColorStop(0, '#f0f9ff');
-        gradient.addColorStop(1, '#e0f2fe');
-    } else if (bgColor.includes('248, 113, 113')) { // red
-        gradient.addColorStop(0, '#fee2e2');
-        gradient.addColorStop(1, '#fca5a5');
-    } else if (bgColor.includes('74, 222, 128')) { // green
-        gradient.addColorStop(0, '#dcfce7');
-        gradient.addColorStop(1, '#86efac');
-    } else if (bgColor.includes('96, 165, 250')) { // blue
-        gradient.addColorStop(0, '#dbeafe');
-        gradient.addColorStop(1, '#93c5fd');
-    } else if (bgColor.includes('250, 204, 21')) { // yellow
-        gradient.addColorStop(0, '#fef9c3');
-        gradient.addColorStop(1, '#fde047');
-    } else if (bgColor.includes('192, 132, 252')) { // purple
-        gradient.addColorStop(0, '#f3e8ff');
-        gradient.addColorStop(1, '#d8b4fe');
-    } else if (bgColor.includes('244, 114, 182')) { // pink
-        gradient.addColorStop(0, '#fce7f3');
-        gradient.addColorStop(1, '#f9a8d4');
-    } else if (bgColor.includes('251, 146, 60')) { // orange
-        gradient.addColorStop(0, '#ffedd5');
-        gradient.addColorStop(1, '#fdba74');
-    } else {
-        // Dark backgrounds
-        gradient.addColorStop(0, '#1e293b');
-        gradient.addColorStop(1, '#0f172a');
-    }
-    
-    storyCtx.fillStyle = gradient;
-    storyCtx.fillRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
-    
-    // Draw snow background if exists (canvas4)
-    if (canvas4) {
-        storyCtx.globalAlpha = 0.6;
-        storyCtx.drawImage(canvas4, 0, 0, STORY_WIDTH, STORY_HEIGHT);
-        storyCtx.globalAlpha = 1.0;
-    }
-    
-    // Calculate scale and position to fit tree in center
-    const sourceWidth = canvas.width;
-    const sourceHeight = canvas.height;
-    const scale = Math.min(STORY_WIDTH / sourceWidth, STORY_HEIGHT / sourceHeight) * 0.82;
-    const scaledWidth = sourceWidth * scale;
-    const scaledHeight = sourceHeight * scale;
-    const offsetX = (STORY_WIDTH - scaledWidth) / 2;
-    const offsetY = (STORY_HEIGHT - scaledHeight) / 2 - 100;
-    
-    // Draw all canvases in order
-    if (canvas2) {
-        storyCtx.drawImage(canvas2, offsetX, offsetY, scaledWidth, scaledHeight);
-    }
-    
-    if (canvas3) {
-        storyCtx.drawImage(canvas3, offsetX, offsetY, scaledWidth, scaledHeight);
-    }
-    
-    if (canvas) {
-        storyCtx.drawImage(canvas, offsetX, offsetY, scaledWidth, scaledHeight);
-    }
-    
-    // Modern watermark with better design
-    const bottomY = STORY_HEIGHT - 150;
-    
-    // Background bar for watermark
-    const barGradient = storyCtx.createLinearGradient(0, bottomY - 80, 0, bottomY + 80);
-    barGradient.addColorStop(0, 'rgba(0,0,0,0)');
-    barGradient.addColorStop(0.5, 'rgba(0,0,0,0.4)');
-    barGradient.addColorStop(1, 'rgba(0,0,0,0)');
-    storyCtx.fillStyle = barGradient;
-    storyCtx.fillRect(0, bottomY - 80, STORY_WIDTH, 160);
-    
-    // Main title with glow effect
-    storyCtx.textAlign = 'center';
-    storyCtx.font = 'bold 72px "Balsamiq Sans", sans-serif';
-    
-    // Outer glow
-    storyCtx.shadowColor = 'rgba(255, 255, 255, 0.8)';
-    storyCtx.shadowBlur = 30;
-    storyCtx.fillStyle = '#fff';
-    storyCtx.fillText('🎄 Merry Christmas! 🎄', STORY_WIDTH / 2, bottomY);
-    
-    // Inner text with gradient
-    const textGradient = storyCtx.createLinearGradient(0, bottomY - 40, 0, bottomY);
-    textGradient.addColorStop(0, '#22c55e');
-    textGradient.addColorStop(1, '#166534');
-    storyCtx.shadowBlur = 0;
-    storyCtx.fillStyle = textGradient;
-    storyCtx.fillText('🎄 Merry Christmas! 🎄', STORY_WIDTH / 2, bottomY);
-    
-    // Subtitle
-    storyCtx.font = '32px "Balsamiq Sans", sans-serif';
-    storyCtx.fillStyle = '#fff';
-    storyCtx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-    storyCtx.shadowBlur = 10;
-    storyCtx.fillText('Created with ❤️', STORY_WIDTH / 2, bottomY + 50);
-    
-    // Convert to blob and show preview
-    storyCanvas.toBlob(function(blob) {
-        currentStoryBlob = blob;
-        const url = URL.createObjectURL(blob);
-        document.getElementById('storyPreviewImage').src = url;
-        document.getElementById('storyPreviewModal').classList.remove('hidden');
-        document.getElementById('storyPreviewModal').classList.add('flex');
-    }, 'image/png');
-}
 
 download_img = function (el) { // i have no idea how this works
     let image = canvas.toDataURL('image/png');
