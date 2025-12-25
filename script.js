@@ -4,6 +4,9 @@ console.log('%c whats new in v2024:', h1);
 console.log('%c Additions', h2, '\n • Change the size of decor\n • Hover to preview decor placement before placing\n • Tree and garland selector\n • Icicle, bell, snowman, black, sparkling light blue, and more dualcolor ornaments\n • Green and blue toppers\n • Orange, dark blue, and purple trees & garland\n • White presents\n • More background colors');
 console.log('%c Improvements', h2, '\n • Improved design\n • Updated many ornament designs');
 
+let musicPlaying = false;
+const bgMusic = document.getElementById('bgMusic');
+
 let decor = 'orn';
 let bg = 0;
 let i = 0;
@@ -163,14 +166,43 @@ function switchBg() {
 }
 
 window.onclick = function (event) {
-    if (event.target == document.getElementById('modal')) {
-        closeModal();
+    if (event.target == document.getElementById('welcomeModal')) {
+        closeWelcomeModal();
+    }
+    if (event.target == document.getElementById('storyPreviewModal')) {
+        closeStoryPreview();
     }
 }
 
-function closeModal() {
-    document.getElementById('modal').classList.add('hidden');
-    document.getElementById('modal').classList.remove('flex');
+function closeWelcomeModal() {
+    document.getElementById('welcomeModal').classList.add('hidden');
+    document.getElementById('welcomeModal').classList.remove('flex');
+    
+    if (!musicPlaying) {
+        bgMusic.play().catch(e => console.log('Audio autoplay prevented'));
+        musicPlaying = true;
+    }
+}
+
+let currentStoryBlob = null;
+
+function closeStoryPreview() {
+    document.getElementById('storyPreviewModal').classList.add('hidden');
+    document.getElementById('storyPreviewModal').classList.remove('flex');
+    if (currentStoryBlob) {
+        URL.revokeObjectURL(document.getElementById('storyPreviewImage').src);
+        currentStoryBlob = null;
+    }
+}
+
+function downloadStoryImage() {
+    if (currentStoryBlob) {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(currentStoryBlob);
+        link.download = 'christmas-tree-story.png';
+        link.click();
+        closeStoryPreview();
+    }
 }
 
 function genSnow() {
@@ -249,12 +281,14 @@ window.onload = function () {
     document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
     document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
 
-    if (window.innerWidth < 905 || window.innerHeight < 850) {
-        document.getElementById('modal').classList.add('flex');
-        document.getElementById('modal').classList.remove('hidden');
-    }
+    setTimeout(() => {
+        document.getElementById('welcomeModal').classList.add('flex');
+        document.getElementById('welcomeModal').classList.remove('hidden');
+    }, 300);
 
-    selectTree('tree.png');
+    bgMusic.volume = 0.3;
+
+    selectTree('assets/trees/tree.png');
 }
 
 function switchTr() {
@@ -558,6 +592,22 @@ function showB() {
     document.getElementById('hideI').classList.add('fa-angle-up');
 }
 
+function toggleMusic() {
+    const musicIcon = document.getElementById('musicIcon');
+    
+    if (musicPlaying) {
+        bgMusic.pause();
+        musicIcon.classList.remove('fa-volume-high');
+        musicIcon.classList.add('fa-volume-xmark');
+        musicPlaying = false;
+    } else {
+        bgMusic.play().catch(e => console.log('Audio play failed'));
+        musicIcon.classList.remove('fa-volume-xmark');
+        musicIcon.classList.add('fa-volume-high');
+        musicPlaying = true;
+    }
+}
+
 function changeSize() {
     if (sizeFactor == 1) {
         sizeFactor = 0.8;
@@ -623,35 +673,30 @@ canvas5.addEventListener('mousemove', function (event) {
 
     if (calcDistance(point1[0], point1[1], point2[0], point2[1]) > 15) {
         farEnough = true;
-        /* ctx.beginPath();
-        ctx.arc(x, y, 50, 0, 2 * Math.PI);
-        ctx.stroke(); */
     } else {
         farEnough = false;
     }
 
     if (dImg == 'random.png') {
-        /* random selection */
-        if (farEnough) { // dont change this to be (dImg == 'random.png' && farEnough)
+        if (farEnough) {
             if (decor == 'top') {
-                d = document.getElementById(topperArray[Math.floor(Math.random() * topperArray.length)]);
+                d = document.getElementById(topperArray[Math.floor(Math.random() * topperArray.length)].split('/').pop());
             } else if (decor == 'orn') {
-                d = document.getElementById(ornamentArray[Math.floor(Math.random() * ornamentArray.length)]);
+                d = document.getElementById(ornamentArray[Math.floor(Math.random() * ornamentArray.length)].split('/').pop());
             } else if (decor == 'cane') {
-                d = document.getElementById(candyCaneArray[Math.floor(Math.random() * candyCaneArray.length)]);
+                d = document.getElementById(candyCaneArray[Math.floor(Math.random() * candyCaneArray.length)].split('/').pop());
             } else if (decor == 'flower') {
-                d = document.getElementById(flowerArray[Math.floor(Math.random() * flowerArray.length)]);
+                d = document.getElementById(flowerArray[Math.floor(Math.random() * flowerArray.length)].split('/').pop());
             } else if (decor == 'light') {
-                d = document.getElementById(lightArray[Math.floor(Math.random() * lightArray.length)]);
+                d = document.getElementById(lightArray[Math.floor(Math.random() * lightArray.length)].split('/').pop());
             } else if (decor == 'pres') {
-                d = document.getElementById(presentArray[Math.floor(Math.random() * presentArray.length)]);
+                d = document.getElementById(presentArray[Math.floor(Math.random() * presentArray.length)].split('/').pop());
             } else if (decor == 'sec') {
-                d = document.getElementById(secretArray[Math.floor(Math.random() * secretArray.length)]);
+                d = document.getElementById(secretArray[Math.floor(Math.random() * secretArray.length)].split('/').pop());
             }
         }
     } else {
-        /* specific selection */
-        d = document.getElementById(dImg);
+        d = document.getElementById(dImg.split('/').pop());
     }
 
     if (window.innerWidth >= 905 && window.innerHeight >= 850) {
@@ -675,169 +720,169 @@ canvas5.addEventListener('click', function () {
 }, false);
 
 let ornamentArray = [
-    'ornament-red.png',
-    'ornament-orange.png',
-    'ornament-yellow.png',
-    'ornament-chartreuse.png',
-    'ornament-green.png',
-    'ornament-cyan.png',
-    'ornament-blue.png',
-    'ornament-purple.png',
-    'ornament-donut.png',
-    'ornament-white.png',
-    'ornament-brown.png',
-    'ornament-silver.png',
-    'ornament-pink.png',
-    'ornament-black.png',
-    'ornament-year-current.png',
-    'ornament-dualcolor-red-white.png',
-    'ornament-dualcolor-orange-white.png',
-    'ornament-dualcolor-gold-white.png',
-    'ornament-dualcolor-green-white.png',
-    'ornament-dualcolor-light-blue-white.png',
-    'ornament-dualcolor-blue-white.png',
-    'ornament-dualcolor-purple-white.png',
-    'ornament-dualcolor-pink-white.png',
-    'ornament-sparkling-red.png',
-    'ornament-sparkling-orange.png',
-    'ornament-sparkling-gold.png',
-    'ornament-sparkling-green.png',
-    'ornament-sparkling-light-blue.png',
-    'ornament-sparkling-blue.png',
-    'ornament-sparkling-purple.png',
-    'ornament-sparkling-pink.png',
-    'ornament-sparkling-white.png',
-    'ornament-icicle.png',
-    'ornament-bell.png',
-    'ornament-snowman.png',
-    'ornament-cookie.png'
+    'assets/ornaments/ornament-red.png',
+    'assets/ornaments/ornament-orange.png',
+    'assets/ornaments/ornament-yellow.png',
+    'assets/ornaments/ornament-chartreuse.png',
+    'assets/ornaments/ornament-green.png',
+    'assets/ornaments/ornament-cyan.png',
+    'assets/ornaments/ornament-blue.png',
+    'assets/ornaments/ornament-purple.png',
+    'assets/ornaments/ornament-donut.png',
+    'assets/ornaments/ornament-white.png',
+    'assets/ornaments/ornament-brown.png',
+    'assets/ornaments/ornament-silver.png',
+    'assets/ornaments/ornament-pink.png',
+    'assets/ornaments/ornament-black.png',
+    'assets/ornaments/ornament-year-current.png',
+    'assets/ornaments/ornament-dualcolor-red-white.png',
+    'assets/ornaments/ornament-dualcolor-orange-white.png',
+    'assets/ornaments/ornament-dualcolor-gold-white.png',
+    'assets/ornaments/ornament-dualcolor-green-white.png',
+    'assets/ornaments/ornament-dualcolor-light-blue-white.png',
+    'assets/ornaments/ornament-dualcolor-blue-white.png',
+    'assets/ornaments/ornament-dualcolor-purple-white.png',
+    'assets/ornaments/ornament-dualcolor-pink-white.png',
+    'assets/ornaments/ornament-sparkling-red.png',
+    'assets/ornaments/ornament-sparkling-orange.png',
+    'assets/ornaments/ornament-sparkling-gold.png',
+    'assets/ornaments/ornament-sparkling-green.png',
+    'assets/ornaments/ornament-sparkling-light-blue.png',
+    'assets/ornaments/ornament-sparkling-blue.png',
+    'assets/ornaments/ornament-sparkling-purple.png',
+    'assets/ornaments/ornament-sparkling-pink.png',
+    'assets/ornaments/ornament-sparkling-white.png',
+    'assets/ornaments/ornament-icicle.png',
+    'assets/ornaments/ornament-bell.png',
+    'assets/ornaments/ornament-snowman.png',
+    'assets/ornaments/ornament-cookie.png'
 ];
 
 let candyCaneArray = [
-    'candy-cane-red-right.png',
-    'candy-cane-red-left.png',
-    'candy-cane-green-right.png',
-    'candy-cane-green-left.png',
-    'candy-cane-red-green-right.png',
-    'candy-cane-red-green-left.png',
-    'candy-cane-pink-right.png',
-    'candy-cane-pink-left.png',
-    'candy-cane-yellow-right.png',
-    'candy-cane-yellow-left.png',
-    'candy-cane-pink-yellow-right.png',
-    'candy-cane-pink-yellow-left.png',
-    'candy-cane-rainbow-right.png',
-    'candy-cane-rainbow-left.png',
-    'candy-cane-zebra-right.png',
-    'candy-cane-zebra-left.png'
+    'assets/candy-canes/candy-cane-red-right.png',
+    'assets/candy-canes/candy-cane-red-left.png',
+    'assets/candy-canes/candy-cane-green-right.png',
+    'assets/candy-canes/candy-cane-green-left.png',
+    'assets/candy-canes/candy-cane-red-green-right.png',
+    'assets/candy-canes/candy-cane-red-green-left.png',
+    'assets/candy-canes/candy-cane-pink-right.png',
+    'assets/candy-canes/candy-cane-pink-left.png',
+    'assets/candy-canes/candy-cane-yellow-right.png',
+    'assets/candy-canes/candy-cane-yellow-left.png',
+    'assets/candy-canes/candy-cane-pink-yellow-right.png',
+    'assets/candy-canes/candy-cane-pink-yellow-left.png',
+    'assets/candy-canes/candy-cane-rainbow-right.png',
+    'assets/candy-canes/candy-cane-rainbow-left.png',
+    'assets/candy-canes/candy-cane-zebra-right.png',
+    'assets/candy-canes/candy-cane-zebra-left.png'
 ];
 
 let flowerArray = [
-    'poinsettia-red.png',
-    'poinsettia-orange.png',
-    'poinsettia-yellow.png',
-    'poinsettia-cyan.png',
-    'poinsettia-blue.png',
-    'poinsettia-purple.png',
-    'poinsettia-pink.png',
-    'poinsettia-white.png',
-    'hibiscus-red.png',
-    'hibiscus-orange.png',
-    'hibiscus-yellow.png',
-    'hibiscus-cyan.png',
-    'hibiscus-blue.png',
-    'hibiscus-purple.png',
-    'hibiscus-pink.png',
-    'hibiscus-white.png'
+    'assets/flowers/poinsettia-red.png',
+    'assets/flowers/poinsettia-orange.png',
+    'assets/flowers/poinsettia-yellow.png',
+    'assets/flowers/poinsettia-cyan.png',
+    'assets/flowers/poinsettia-blue.png',
+    'assets/flowers/poinsettia-purple.png',
+    'assets/flowers/poinsettia-pink.png',
+    'assets/flowers/poinsettia-white.png',
+    'assets/flowers/hibiscus-red.png',
+    'assets/flowers/hibiscus-orange.png',
+    'assets/flowers/hibiscus-yellow.png',
+    'assets/flowers/hibiscus-cyan.png',
+    'assets/flowers/hibiscus-blue.png',
+    'assets/flowers/hibiscus-purple.png',
+    'assets/flowers/hibiscus-pink.png',
+    'assets/flowers/hibiscus-white.png'
 ];
 
 let lightArray = [
-    'light-red.png',
-    'light-orange.png',
-    'light-yellow.png',
-    'light-green.png',
-    'light-cyan.png',
-    'light-blue.png',
-    'light-purple.png',
-    'light-pink.png',
-    'light-white.png',
-    'light-rainbow.png'
+    'assets/lights/light-red.png',
+    'assets/lights/light-orange.png',
+    'assets/lights/light-yellow.png',
+    'assets/lights/light-green.png',
+    'assets/lights/light-cyan.png',
+    'assets/lights/light-blue.png',
+    'assets/lights/light-purple.png',
+    'assets/lights/light-pink.png',
+    'assets/lights/light-white.png',
+    'assets/lights/light-rainbow.png'
 ];
 
 let presentArray = [ // higher chance to get normal sized present than other ones
-    'present-red.png',
-    'present-red.png',
-    'present-red-long.png',
-    'present-red-tall.png',
-    'present-yellow.png',
-    'present-yellow.png',
-    'present-yellow-long.png',
-    'present-yellow-tall.png',
-    'present-green.png',
-    'present-green.png',
-    'present-green-long.png',
-    'present-green-tall.png',
-    'present-blue.png',
-    'present-blue.png',
-    'present-blue-long.png',
-    'present-blue-tall.png',
-    'present-dark-blue.png',
-    'present-dark-blue.png',
-    'present-dark-blue-long.png',
-    'present-dark-blue-tall.png',
-    'present-purple.png',
-    'present-purple.png',
-    'present-purple-long.png',
-    'present-purple-tall.png',
-    'present-white.png',
-    'present-white.png',
-    'present-white-long.png',
-    'present-white-tall.png'
+    'assets/presents/present-red.png',
+    'assets/presents/present-red.png',
+    'assets/presents/present-red-long.png',
+    'assets/presents/present-red-tall.png',
+    'assets/presents/present-yellow.png',
+    'assets/presents/present-yellow.png',
+    'assets/presents/present-yellow-long.png',
+    'assets/presents/present-yellow-tall.png',
+    'assets/presents/present-green.png',
+    'assets/presents/present-green.png',
+    'assets/presents/present-green-long.png',
+    'assets/presents/present-green-tall.png',
+    'assets/presents/present-blue.png',
+    'assets/presents/present-blue.png',
+    'assets/presents/present-blue-long.png',
+    'assets/presents/present-blue-tall.png',
+    'assets/presents/present-dark-blue.png',
+    'assets/presents/present-dark-blue.png',
+    'assets/presents/present-dark-blue-long.png',
+    'assets/presents/present-dark-blue-tall.png',
+    'assets/presents/present-purple.png',
+    'assets/presents/present-purple.png',
+    'assets/presents/present-purple-long.png',
+    'assets/presents/present-purple-tall.png',
+    'assets/presents/present-white.png',
+    'assets/presents/present-white.png',
+    'assets/presents/present-white-long.png',
+    'assets/presents/present-white-tall.png'
 ];
 
 let topperArray = [
-    'star-gold-1.png',
-    'star-gold-2.png',
-    'star-gold-3.png',
-    'star-gold-4.png',
-    'star-red-1.png',
-    'star-red-2.png',
-    'star-red-3.png',
-    'star-red-4.png',
-    'star-white-1.png',
-    'star-white-2.png',
-    'star-white-3.png',
-    'star-white-4.png',
-    'star-green-1.png',
-    'star-green-2.png',
-    'star-green-3.png',
-    'star-green-4.png',
-    'star-blue-1.png',
-    'star-blue-2.png',
-    'star-blue-3.png',
-    'star-blue-4.png',
-    'bow-red.png',
-    'bow-gold.png',
-    'bow-white.png',
-    'bow-green.png',
-    'bow-blue.png',
-    'finial-white.png',
-    'finial-gold.png',
-    'finial-red.png',
-    'finial-green.png',
-    'finial-blue.png'
+    'assets/toppers/star-gold-1.png',
+    'assets/toppers/star-gold-2.png',
+    'assets/toppers/star-gold-3.png',
+    'assets/toppers/star-gold-4.png',
+    'assets/toppers/star-red-1.png',
+    'assets/toppers/star-red-2.png',
+    'assets/toppers/star-red-3.png',
+    'assets/toppers/star-red-4.png',
+    'assets/toppers/star-white-1.png',
+    'assets/toppers/star-white-2.png',
+    'assets/toppers/star-white-3.png',
+    'assets/toppers/star-white-4.png',
+    'assets/toppers/star-green-1.png',
+    'assets/toppers/star-green-2.png',
+    'assets/toppers/star-green-3.png',
+    'assets/toppers/star-green-4.png',
+    'assets/toppers/star-blue-1.png',
+    'assets/toppers/star-blue-2.png',
+    'assets/toppers/star-blue-3.png',
+    'assets/toppers/star-blue-4.png',
+    'assets/toppers/bow-red.png',
+    'assets/toppers/bow-gold.png',
+    'assets/toppers/bow-white.png',
+    'assets/toppers/bow-green.png',
+    'assets/toppers/bow-blue.png',
+    'assets/toppers/finial-white.png',
+    'assets/toppers/finial-gold.png',
+    'assets/toppers/finial-red.png',
+    'assets/toppers/finial-green.png',
+    'assets/toppers/finial-blue.png'
 ];
 
 let secretArray = [
-    'ornament-hearts.png',
-    'ornament-uwu.png',
-    'ornament-tree.png',
-    'ornament-star.png',
-    'ornament-hangy-orange.png',
-    'present-white.png',
-    'present-white.png',
-    'present-white-long.png',
-    'present-white-tall.png'
+    'assets/ornaments/ornament-hearts.png',
+    'assets/ornaments/ornament-uwu.png',
+    'assets/ornaments/ornament-tree.png',
+    'assets/ornaments/ornament-star.png',
+    'assets/ornaments/ornament-hangy-orange.png',
+    'assets/presents/present-white.png',
+    'assets/presents/present-white.png',
+    'assets/presents/present-white-long.png',
+    'assets/presents/present-white-tall.png'
 ];
 
 function select(selectedD) {
@@ -851,20 +896,22 @@ function selectTree(selectedT) {
 
     ctx3.clearRect(0, 0, canvas.width, canvas.height);
 
+    const treeFileName = tImg.split('/').pop();
+
     if (window.innerWidth >= 905 && window.innerHeight >= 850) {
-        x = (canvas3.width / 2) - ((document.getElementById(tImg).width * 10) / 2);
-        y = (canvas3.height / 2) - ((document.getElementById(tImg).height * 10) / 2) + document.getElementById('decorDock').offsetHeight;
+        x = (canvas3.width / 2) - ((document.getElementById(treeFileName).width * 10) / 2);
+        y = (canvas3.height / 2) - ((document.getElementById(treeFileName).height * 10) / 2) + document.getElementById('decorDock').offsetHeight;
         w = lgTreeWidth;
         h = lgTreeHeight;
 
     } else if (window.innerWidth < 905 || window.innerHeight < 850) {
-        x = (canvas3.width / 2) - ((document.getElementById(tImg).width * 10) / trResizeConstant);
-        y = (canvas3.height / 2) - ((document.getElementById(tImg).height * 10) / trResizeConstant) + document.getElementById('decorDock').offsetHeight;
+        x = (canvas3.width / 2) - ((document.getElementById(treeFileName).width * 10) / trResizeConstant);
+        y = (canvas3.height / 2) - ((document.getElementById(treeFileName).height * 10) / trResizeConstant) + document.getElementById('decorDock').offsetHeight;
         w = smTreeWidth;
         h = smTreeHeight;
     }
 
-    const tree = document.getElementById(tImg);
+    const tree = document.getElementById(treeFileName);
     ctx3.drawImage(tree, x, y, w, h);
 }
 
@@ -875,20 +922,22 @@ function selectGar(selectedG) {
     ctx2.clearRect(0, 0, canvas.width, canvas.height);
 
     if (gImg !== 'none') {
+        const garFileName = gImg.split('/').pop();
+        
         if ((window.innerWidth >= 905 && window.innerHeight >= 850)) {
-            x = (canvas2.width / 2) - ((document.getElementById(gImg).width * 10) / 2);
-            y = (canvas2.height / 2) - ((document.getElementById(gImg).height * 10) / 2) + document.getElementById('decorDock').offsetHeight;
+            x = (canvas2.width / 2) - ((document.getElementById(garFileName).width * 10) / 2);
+            y = (canvas2.height / 2) - ((document.getElementById(garFileName).height * 10) / 2) + document.getElementById('decorDock').offsetHeight;
             w = lgTreeWidth;
             h = lgTreeHeight;
 
         } else if ((window.innerWidth < 905 || window.innerHeight < 850)) {
-            x = (canvas2.width / 2) - ((document.getElementById(gImg).width * 10) / trResizeConstant);
-            y = (canvas2.height / 2) - ((document.getElementById(gImg).height * 10) / trResizeConstant) + document.getElementById('decorDock').offsetHeight;
+            x = (canvas2.width / 2) - ((document.getElementById(garFileName).width * 10) / trResizeConstant);
+            y = (canvas2.height / 2) - ((document.getElementById(garFileName).height * 10) / trResizeConstant) + document.getElementById('decorDock').offsetHeight;
             w = smTreeWidth;
             h = smTreeHeight;
         }
 
-        const gar = document.getElementById(gImg);
+        const gar = document.getElementById(garFileName);
         ctx2.drawImage(gar, x, y, w, h);
     }
 }
@@ -1032,6 +1081,75 @@ function openSecret() {
     document.getElementById('random').classList.add('bg-lightGreen/90');
     document.getElementById('random').classList.add('border-gray-400/90');
     dImg = 'random.png';
+}
+
+function takeStorySnapshot() {
+    // Instagram/WhatsApp story size: 1080x1920 (9:16 ratio)
+    const STORY_WIDTH = 1080;
+    const STORY_HEIGHT = 1920;
+    
+    // Create temporary canvas for story
+    const storyCanvas = document.createElement('canvas');
+    storyCanvas.width = STORY_WIDTH;
+    storyCanvas.height = STORY_HEIGHT;
+    const storyCtx = storyCanvas.getContext('2d');
+    
+    // Fill background (same as current body background)
+    const bgColor = window.getComputedStyle(document.body).backgroundColor;
+    storyCtx.fillStyle = bgColor;
+    storyCtx.fillRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
+    
+    // Draw snow background if exists (canvas4)
+    if (canvas4) {
+        storyCtx.drawImage(canvas4, 0, 0, STORY_WIDTH, STORY_HEIGHT);
+    }
+    
+    // Calculate scale and position to fit tree in center
+    const sourceWidth = canvas.width;
+    const sourceHeight = canvas.height;
+    const scale = Math.min(STORY_WIDTH / sourceWidth, STORY_HEIGHT / sourceHeight) * 0.85;
+    const scaledWidth = sourceWidth * scale;
+    const scaledHeight = sourceHeight * scale;
+    const offsetX = (STORY_WIDTH - scaledWidth) / 2;
+    const offsetY = (STORY_HEIGHT - scaledHeight) / 2 - 80;
+    
+    // Draw all canvases in order
+    // Canvas2: Garland layer
+    if (canvas2) {
+        storyCtx.drawImage(canvas2, offsetX, offsetY, scaledWidth, scaledHeight);
+    }
+    
+    // Canvas3: Tree layer
+    if (canvas3) {
+        storyCtx.drawImage(canvas3, offsetX, offsetY, scaledWidth, scaledHeight);
+    }
+    
+    // Canvas: Decorations layer
+    if (canvas) {
+        storyCtx.drawImage(canvas, offsetX, offsetY, scaledWidth, scaledHeight);
+    }
+    
+    // Add watermark/text at bottom
+    storyCtx.font = 'bold 56px "Balsamiq Sans", sans-serif';
+    storyCtx.fillStyle = '#227322';
+    storyCtx.textAlign = 'center';
+    storyCtx.shadowColor = 'rgba(255,255,255,0.8)';
+    storyCtx.shadowBlur = 10;
+    storyCtx.fillText('🎄 Merry Christmas! 🎄', STORY_WIDTH / 2, STORY_HEIGHT - 120);
+    
+    storyCtx.shadowBlur = 0;
+    storyCtx.font = '36px "Balsamiq Sans", sans-serif';
+    storyCtx.fillStyle = '#666';
+    storyCtx.fillText('Made with Christmas Tree Decorator', STORY_WIDTH / 2, STORY_HEIGHT - 60);
+    
+    // Convert to blob and show preview
+    storyCanvas.toBlob(function(blob) {
+        currentStoryBlob = blob;
+        const url = URL.createObjectURL(blob);
+        document.getElementById('storyPreviewImage').src = url;
+        document.getElementById('storyPreviewModal').classList.remove('hidden');
+        document.getElementById('storyPreviewModal').classList.add('flex');
+    }, 'image/png');
 }
 
 download_img = function (el) { // i have no idea how this works
