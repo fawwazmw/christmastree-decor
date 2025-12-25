@@ -549,9 +549,12 @@ function hideB() {
     document.getElementById('baseSelector').classList.add('hidden');
     document.getElementById('decorDock').classList.remove('block');
     document.getElementById('decorDock').classList.add('hidden');
+    
+    // Reset position (works for both mobile and desktop)
     document.getElementById('optionsDiv').style.top = '0px';
     document.getElementById('optionsDiv').style.left = '0px';
     document.getElementById('optionsDiv').classList.add('hover:opacity-100');
+    
     document.getElementById('hideI').classList.remove('fa-angle-up');
     document.getElementById('hideI').classList.add('fa-angle-down');
     ctx5.clearRect(0, 0, canvas.width, canvas.height);
@@ -564,8 +567,17 @@ function showB() {
     document.getElementById('baseSelector').classList.add('md:block');
     document.getElementById('decorDock').classList.remove('hidden');
     document.getElementById('decorDock').classList.add('block');
-    document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
-    document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
+    
+    // Only adjust positioning on desktop (md and above)
+    if (window.innerWidth >= 768) {
+        document.getElementById('optionsDiv').style.top = document.getElementById('decorDock').offsetHeight + 'px';
+        document.getElementById('optionsDiv').style.left = document.getElementById('decorSelector').offsetWidth + 'px';
+    } else {
+        // On mobile, reset to default position
+        document.getElementById('optionsDiv').style.top = '';
+        document.getElementById('optionsDiv').style.left = '';
+    }
+    
     document.getElementById('optionsDiv').classList.remove('hover:opacity-100');
     document.getElementById('hideI').classList.remove('fa-angle-down');
     document.getElementById('hideI').classList.add('fa-angle-up');
